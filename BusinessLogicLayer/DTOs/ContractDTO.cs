@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BusinessLogicLayer.DTOs.Request;
 
-namespace DataAccessLayer.Entities;
+namespace BusinessLogicLayer.DTOs;
 
-public partial class Contract
+public class ContractDTO
 {
     public string ContractId { get; set; } = null!;
 
@@ -33,15 +32,11 @@ public partial class Contract
 
     public decimal BasicSalary { get; set; }
 
-    public decimal? TotalAllowance { get; set; }
+    public virtual ICollection<AllowanceDTO> Allowances { get; set; } = new List<AllowanceDTO>();
 
-    public virtual ICollection<Allowance> Allowances { get; set; } = new List<Allowance>();
+    public virtual DepartmentDTO? Department { get; set; }
 
-    public virtual Department? Department { get; set; }
+    //public virtual EmployeeDTO? Employee { get; set; }
 
-    public virtual Employee? Employee { get; set; }
-
-    public virtual ICollection<Payroll> Payrolls { get; set; } = new List<Payroll>();
-
-    public virtual Position? Position { get; set; }
+    public virtual PositionDTO? Position { get; set; }
 }

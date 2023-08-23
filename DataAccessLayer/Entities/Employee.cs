@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BusinessObjects.Models;
+namespace DataAccessLayer.Entities;
 
 public partial class Employee
 {
@@ -15,21 +15,23 @@ public partial class Employee
 
     public string Gender { get; set; } = null!;
 
-    public string? IdentityCardNumber { get; set; }
+    public string IdentityCardNumber { get; set; } = null!;
 
-    public string Password { get; set; } = null!;
+    public string? EductionalLevel { get; set; }
+
+    public string? Major { get; set; }
+
+    public bool IsFormer { get; set; }
+
+    public byte[] PasswordHash { get; set; } = null!;
+
+    public byte[] PasswordKey { get; set; } = null!;
 
     public string Phone { get; set; } = null!;
 
-    public int? DepartmentId { get; set; }
-
-    public int? PositionId { get; set; }
+    public string Email { get; set; } = null!;
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 
-    public virtual Department? Department { get; set; }
-
     public virtual ICollection<Leave> Leaves { get; set; } = new List<Leave>();
-
-    public virtual Position? Position { get; set; }
 }

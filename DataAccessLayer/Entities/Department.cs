@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BusinessObjects.Models;
+namespace DataAccessLayer.Entities;
 
 public partial class Department
 {
@@ -9,5 +9,5 @@ public partial class Department
 
     public string? DepartmentName { get; set; }
 
-    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+    public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 }

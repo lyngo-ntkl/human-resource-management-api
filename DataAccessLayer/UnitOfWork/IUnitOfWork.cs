@@ -9,7 +9,8 @@ namespace DataAccessLayer.UnitOfWork
 {
     public interface IUnitOfWork: IDisposable
     {
-        public IGenericRepository<T> Repository<T>() where T : class;
-        public void Commit();
+        IGenericRepository<T> GetRepository<T>() where T : class;
+        int Commit();
+        Task<int> CommitAsync();
     }
 }

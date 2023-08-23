@@ -1,19 +1,17 @@
-﻿using BusinessObjects.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessLogicLayer.DTOs.Request;
+using BusinessLogicLayer.DTOs.Response;
+using DataAccessLayer.Entities;
 
 namespace DataAccessLayer.Service.Interfaces
 {
     public interface IEmployeeService
     {
         IEnumerable<Employee> Get();
-        Employee GetById(string id);
-        void Insert(Employee entity);
-        void Update(Employee entity);
-        void Delete(Employee entity);
+        EmployeeResponse GetById(string id);
+        Task<EmployeeResponse> GetByNameAndPassword(AuthenticationRequest request);
+        void Insert(EmployeeRequest request);
+        void Update(EmployeeRequest request);
+        void Delete(EmployeeRequest request);
         void Delete(string id);
     }
 }

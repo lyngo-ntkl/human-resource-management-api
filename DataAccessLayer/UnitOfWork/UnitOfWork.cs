@@ -1,4 +1,4 @@
-﻿using BusinessObjects.Models;
+﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Repository;
 using System;
 using System.Collections.Generic;
@@ -12,8 +12,41 @@ namespace DataAccessLayer.UnitOfWork
     {
         private readonly HumanResourceManagementContext _context;
         private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
+        private bool disposed = false;
+        public UnitOfWork(HumanResourceManagementContext context)
+        {
+            _context = context;
+        }
 
-        public IGenericRepository<T> Repository<T>() where T : class
+        public int Commit()
+        {
+            return _context.SaveChanges();
+        }
+
+        public async Task<int> CommitAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public IGenericRepository<T> GetRepository<T>() where T : class
         {
             Type type = typeof(T);
             if(!_repositories.TryGetValue(type, out var repository))
@@ -23,21 +56,6 @@ namespace DataAccessLayer.UnitOfWork
                 return repository1;
             }
             return repository as GenericRepository<T>;
-        }
-
-        public UnitOfWork(HumanResourceManagementContext context)
-        {
-            _context = context;
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Commit()
-        {
-            throw new NotImplementedException();
         }
     }
 }
