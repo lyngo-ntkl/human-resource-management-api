@@ -2,7 +2,7 @@
 
 ### You will find in this repo the following stuff:
 
-* An API to manage tea shop activities using C#, ASP.NET 7, MSSQL, Swagger UI.
+* An API to manage human resource & payroll using C#, ASP.NET 7, MSSQL, Swagger UI.
 
 ### ERD logical
 
