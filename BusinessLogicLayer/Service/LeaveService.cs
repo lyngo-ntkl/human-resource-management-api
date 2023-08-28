@@ -32,7 +32,8 @@ namespace BusinessLogicLayer.Service
 
         public IEnumerable<LeaveResponse> Get()
         {
-            throw new NotImplementedException();
+            var leaves = _unitOfWork.GetRepository<Leave>().Get();
+            return _mapper.Map<IEnumerable<Leave>, IEnumerable<LeaveResponse>>(leaves);
         }
 
         public LeaveResponse GetById(string id)

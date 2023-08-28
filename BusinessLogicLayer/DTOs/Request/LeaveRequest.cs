@@ -3,6 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLogicLayer.DTOs.Request;
 
+public enum LeaveStatus
+{
+    Approved, Processed, Rejected
+}
 public class LeaveRequest
 {
     //public int LeaveId { get; set; }
@@ -13,7 +17,7 @@ public class LeaveRequest
     [Required]
     public DateTime EndDate { get; set; }
     [Required]
-    public short Status { get; set; }
+    public string Status { get; set; }
     [Required]
     public short Type { get; set; }
     [Required]

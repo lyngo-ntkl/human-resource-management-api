@@ -25,21 +25,27 @@ namespace API.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpPost]
-        public async Task Login(AuthenticationRequest request)
+        [HttpPost("authentication")]
+        public async Task<ActionResult<EmployeeResponse>> Login(AuthenticationRequest request)
         {
-            
+            var employee = _employeeService.GetByEmailAndPassword(request);
+            if(employee == null)
+            {
+                return NotFound();
+            }
+            return Ok(employee);
         }
 
         // GET: api/Employees
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
+        public async Task<ActionResult<IEnumerable<EmployeeResponse>>> GetEmployees()
         {
-            if (_context.Employees == null)
+            var employees = _employeeService.Get();
+            if (employees == null)
             {
                 return NotFound();
             }
-            return await _context.Employees.ToListAsync();
+            return Ok(employees);
         }
 
         // GET: api/Employees/5
@@ -47,12 +53,10 @@ namespace API.Controllers
         public async Task<ActionResult<EmployeeResponse>> GetEmployee(string id)
         {
             var employee = _employeeService.GetById(id);
-
             if (employee == null)
             {
                 return NotFound();
             }
-
             return employee;
         }
 
@@ -90,30 +94,10 @@ namespace API.Controllers
         // POST: api/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Employee>> CreateEmployee(Employee employee)
+        public async Task<ActionResult<EmployeeResponse>> CreateEmployee(EmployeeRequest request)
         {
-            if (_context.Employees == null)
-            {
-                return Problem("Entity set 'HumanResourceManagementContext.Employees'  is null.");
-            }
-            _context.Employees.Add(employee);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (EmployeeExists(employee.EmployeeId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, employee);
+            var employee = _employeeService.Insert(request);
+            return employee;
         }
 
         // DELETE: api/Employees/5

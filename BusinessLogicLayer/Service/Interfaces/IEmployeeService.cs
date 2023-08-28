@@ -6,12 +6,12 @@ namespace DataAccessLayer.Service.Interfaces
 {
     public interface IEmployeeService
     {
-        IEnumerable<Employee> Get();
+        IEnumerable<EmployeeResponse> Get();
         EmployeeResponse GetById(string id);
-        Task<EmployeeResponse> GetByNameAndPassword(AuthenticationRequest request);
-        void Insert(EmployeeRequest request);
-        void Update(EmployeeRequest request);
-        void Delete(EmployeeRequest request);
-        void Delete(string id);
+        Task<EmployeeResponse> GetByEmailAndPassword(AuthenticationRequest request);
+        EmployeeResponse Insert(EmployeeRequest request);
+        EmployeeResponse Update(EmployeeRequest request);
+        //EmployeeResponse Delete(EmployeeRequest request);
+        EmployeeResponse Delete(string id);
     }
 }

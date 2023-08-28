@@ -16,12 +16,10 @@ namespace API.Controllers
     [ApiController]
     public class LeavesController : ControllerBase
     {
-        private readonly HumanResourceManagementContext _context;
         private readonly ILeaveService _leaveService;
 
-        public LeavesController(ILeaveService leaveService, HumanResourceManagementContext context)
+        public LeavesController(ILeaveService leaveService)
         {
-            _context = context;
             _leaveService = leaveService;
         }
 

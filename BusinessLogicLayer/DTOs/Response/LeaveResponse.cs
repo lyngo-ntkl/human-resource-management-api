@@ -12,7 +12,7 @@ public class LeaveResponse
 
     public DateTime EndDate { get; set; }
 
-    public short Status { get; set; }
+    public string Status { get; set; }
 
     public short Type { get; set; }
 

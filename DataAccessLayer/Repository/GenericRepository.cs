@@ -32,7 +32,7 @@ namespace DataAccessLayer.Repository
         public IEnumerable<T> Get(Expression<Func<T, bool>> filter = null)
         {
             IQueryable<T> query = Values;
-            if(filter != null)
+            if (filter != null)
             {
                 query = query.Where(filter);
             }
@@ -42,7 +42,7 @@ namespace DataAccessLayer.Repository
         public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> filter = null)
         {
             IQueryable<T> query = Values;
-            if(filter != null)
+            if (filter != null)
             {
                 query = query.Where(filter);
             }
@@ -66,7 +66,7 @@ namespace DataAccessLayer.Repository
         public T Delete(object id)
         {
             T entity = Values.Find(id);
-            if(entity == null)
+            if (entity == null)
             {
                 return null;
             }
@@ -81,7 +81,7 @@ namespace DataAccessLayer.Repository
         public async Task<T> DeleteAsync(object id)
         {
             var value = await Values.FindAsync(id);
-            if(value == null)
+            if (value == null)
             {
                 return null;
             }
@@ -106,6 +106,22 @@ namespace DataAccessLayer.Repository
             var value = Values.Update(entity);
             await _context.SaveChangesAsync();
             return value.Entity;
+        }
+    }
+
+    public static class DynamicFilter
+    {
+        public static IQueryable<T> Filter<T>(this IQueryable<T> source, T filter)
+        {
+            foreach (var property in filter.GetType().GetProperties())
+            {
+                if (filter.GetType().GetProperty(property.Name) != null)
+                {
+                    object data = filter.GetType().GetProperty(property.Name).GetValue(filter);
+                    //later
+                }
+            }
+            return source;
         }
     }
 }

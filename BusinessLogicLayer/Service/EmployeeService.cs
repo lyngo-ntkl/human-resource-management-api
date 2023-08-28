@@ -30,20 +30,15 @@ namespace DataAccessLayer.Service
             _config = configuration;
         }
 
-        public void Delete(EmployeeRequest request)
+        public EmployeeResponse Delete(string id)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Employee> Get()
+        public IEnumerable<EmployeeResponse> Get()
         {
             var employees = _unitOfWork.GetRepository<Employee>().Get();
-            return employees;
+            return _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeResponse>>(employees);
         }
 
         public EmployeeResponse GetById(string id)
@@ -52,71 +47,76 @@ namespace DataAccessLayer.Service
             return _mapper.Map<EmployeeResponse>(employee);
         }
 
-        public async Task<EmployeeResponse> GetByNameAndPassword(AuthenticationRequest request)
+        public async Task<EmployeeResponse> GetByEmailAndPassword(AuthenticationRequest request)
         {
-            var employee = _unitOfWork.GetRepository<Employee>().GetAsync().Result.Where(x => request.Email.Equals(x.Email)).FirstOrDefault();
-            if(employee == null)
+            var employee = _unitOfWork.GetRepository<Employee>().GetAsync().Result.Where(x => x.Email.Equals(request.Email)).FirstOrDefault();
+            if (employee == null)
             {
-                throw new Exception("Invalid email");
-            }
-            else if (!employee.PasswordHash.SequenceEqual(EncryptionUtils.encrypt(request.Password, employee.PasswordKey)))
+                throw new Exception("Email does not exist");
+            } else if (!employee.PasswordHash.SequenceEqual(EncryptionUtils.encrypt(request.Password, employee.PasswordKey)))
             {
-                throw new Exception("Invalid password");
+                throw new Exception("Password does not exist");
             }
             else
             {
                 var response = _mapper.Map<EmployeeResponse>(employee);
-                response.Token = CreateJwtToken(employee);
+                response.Token = GenerateJwt(employee);
                 return response;
             }
         }
 
-        public void Insert(EmployeeRequest request)
+        public EmployeeResponse Insert(EmployeeRequest request)
         {
-            var employee = _unitOfWork.GetRepository<Employee>().Get().Where(x => x.IdentityCardNumber.Equals(request.IdentityCardNumber)).FirstOrDefault();
-            if(employee != null)
+            var employee = _unitOfWork.GetRepository<Employee>().Get().Where(x => request.IdentityCardNumber.Equals(x.IdentityCardNumber)).FirstOrDefault();
+            if (employee != null)
             {
-                if (!employee.IsFormer)
+                if(employee.IsFormer)
                 {
-                    throw new Exception("Employee has already existed");
+                    _mapper.Map<EmployeeRequest, Employee>(request,employee);
+                    _unitOfWork.GetRepository<Employee>().Update(employee);
+                    return _mapper.Map<EmployeeResponse>(employee);
                 }
                 else
                 {
-                    _mapper.Map<EmployeeRequest, Employee>(request, employee);
-                    _unitOfWork.GetRepository<Employee>().Update(employee);
+                    throw new Exception("Employee is currently working for the company.");
                 }
             }
             else
             {
-                var employee1 = _mapper.Map<Employee>(request);
+                employee = _mapper.Map<Employee>(request);
                 EncryptionUtils.encrypt(request.Password, out byte[] key, out byte[] hash);
                 employee.PasswordHash = hash;
                 employee.PasswordKey = key;
                 _unitOfWork.GetRepository<Employee>().Insert(employee);
+                return _mapper.Map<EmployeeResponse>(employee);
             }
         }
 
-        public void Update(EmployeeRequest request)
+        public EmployeeResponse Update(EmployeeRequest request)
         {
             throw new NotImplementedException();
         }
 
-        private string CreateJwtToken(Employee employee)
+        private string GenerateJwt(Employee employee)
         {
+            // create claim identity
             List<Claim> claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Sid, employee.EmployeeId)
+                new Claim(ClaimTypes.PrimarySid, employee.EmployeeId),
+                new Claim(ClaimTypes.Sid, employee.IdentityCardNumber)
             };
             ClaimsIdentity identity = new ClaimsIdentity(claims);
-            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["AppSettings:Token"]));
+            // create signing credential
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:SecurityKey"]));
             SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-            SecurityTokenDescriptor descriptor = new SecurityTokenDescriptor()
+            // create jwt
+            var handler = new JwtSecurityTokenHandler();
+            var descriptor = new SecurityTokenDescriptor()
             {
                 Subject = identity,
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = credentials
             };
-            var handler = new JwtSecurityTokenHandler();
             var securityToken = handler.CreateToken(descriptor);
             var jwt = handler.WriteToken(securityToken);
             return jwt;

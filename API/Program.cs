@@ -6,6 +6,8 @@ using DataAccessLayer.Service;
 using DataAccessLayer.Service.Interfaces;
 using DataAccessLayer.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,11 +22,21 @@ builder.Services.AddDbContext<HumanResourceManagementContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<ILeaveService, LeaveService>();
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer();
-builder.Services.AddAuthorization();
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+//}).AddJwtBearer(options =>
+//{
+//    var config = builder.Configuration;
+//    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+//    {
+//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:SecurityKey"])),
+//        ValidateIssuerSigningKey = true
+//    };
+//});
+//builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
