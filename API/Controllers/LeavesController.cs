@@ -9,11 +9,13 @@ using DataAccessLayer.Entities;
 using BusinessLogicLayer.Service.Interfaces;
 using BusinessLogicLayer.DTOs.Response;
 using BusinessLogicLayer.DTOs.Request;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
     [Route("api/leave")]
     [ApiController]
+    //[Authorize]
     public class LeavesController : ControllerBase
     {
         private readonly ILeaveService _leaveService;
@@ -45,6 +47,7 @@ namespace API.Controllers
         // PUT: api/Leaves/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        //[Authorize(Roles = "Manager")]
         public async Task<ActionResult<LeaveResponse>> UpdateLeave(string id, LeaveRequest leave)
         {
             var response = _leaveService.Update(id, leave);
@@ -64,6 +67,7 @@ namespace API.Controllers
         }
 
         // DELETE: api/Leaves/5
+        
         [HttpDelete("{id}")]
         public async Task<ActionResult<LeaveResponse>> DeleteLeave(string id)
         {

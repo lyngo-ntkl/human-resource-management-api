@@ -6,13 +6,14 @@ GO
 
 CREATE TABLE employees(
 	employee_id char(6) NOT NULL,
+	candidate_id NOT NULL,
 	name nvarchar(50) NOT NULL,
 	birthday date NOT NULL,
 	address nvarchar(256) NOT NULL,
 	gender nchar(3) NOT NULL CHECK(gender IN('Nam', 'Nữ')),
 	identity_card_number varchar(16) NOT NULL UNIQUE,
 	eductional_level nvarchar(100),
-	major varchar(50),
+	major nvarchar(50),
 	is_former BIT NOT NULL,
 	password_hash VARBINARY(MAX) NOT NULL,
 	password_key VARBINARY(MAX) NOT NULL,
