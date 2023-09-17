@@ -41,17 +41,17 @@ builder.Services.AddScoped<ILeaveService, LeaveService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseDeveloperExceptionPage();
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+//else if (app.Environment.IsProduction())
+//{
     app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else if (app.Environment.IsProduction())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FieldEngineerApi v1"));
+//}
 
 app.UseHttpsRedirection();
 
